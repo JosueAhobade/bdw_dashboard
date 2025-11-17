@@ -17,16 +17,16 @@
             <h5
               class="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl"
             >
-              {{ selectedEvent ? 'Edit Event' : 'Add Event' }}
+              {{ selectedEvent ? "Modifier l'événement" : "Ajouter un événement" }}
             </h5>
             <p class="text-sm text-gray-500 dark:text-gray-400">
-              Plan your next big moment: schedule or edit an event to stay on track
+              Planifiez votre prochain grand moment : programmez ou modifiez un événement pour rester organisé
             </p>
 
             <div class="mt-8">
               <div>
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Event Title
+                  Titre de l'événement
                 </label>
                 <input
                   v-model="eventTitle"
@@ -37,7 +37,7 @@
 
               <div class="mt-6">
                 <label class="block mb-4 text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Event Color
+                  Couleur de l'événement
                 </label>
                 <div class="flex flex-wrap items-center gap-4 sm:gap-5">
                   <div v-for="(value, key) in calendarsEvents" :key="key" class="n-chk">
@@ -70,7 +70,7 @@
 
               <div class="mt-6">
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Enter Start Date
+                  Date de début
                 </label>
                 <input
                   v-model="eventStartDate"
@@ -81,7 +81,7 @@
 
               <div class="mt-6">
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
-                  Enter End Date
+                  Date de fin
                 </label>
                 <input
                   v-model="eventEndDate"
@@ -96,21 +96,21 @@
                 @click="closeModal"
                 class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto"
               >
-                Close
+                Fermer
               </button>
 
               <button
                 @click="handleAddOrUpdateEvent"
                 class="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
               >
-                {{ selectedEvent ? 'Update Changes' : 'Add Event' }}
+                {{ selectedEvent ? 'Enregistrer les modifications' : 'Ajouter un événement' }}
               </button>
               <button
                 v-if="selectedEvent"
                 @click="handleDeleteEvent"
                 class="flex w-full justify-center rounded-lg border border-error-500 bg-error-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-error-600 sm:w-auto"
               >
-                Delete Event
+                Supprimer l'événement
               </button>
             </div>
           </div>
@@ -222,7 +222,7 @@
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
 
-const currentPageTitle = ref('Calendar')
+const currentPageTitle = ref('Calendrier')
 import { ref, reactive, onMounted } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
@@ -367,7 +367,7 @@ const calendarOptions = reactive({
   eventContent: renderEventContent,
   customButtons: {
     addEventButton: {
-      text: 'Add Event +',
+      text: 'Ajouter un événement +',
       click: openModal,
     },
   },

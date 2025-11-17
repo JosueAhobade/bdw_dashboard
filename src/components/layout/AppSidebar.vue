@@ -15,7 +15,7 @@
   >
     <div
       :class="[
-        'py-8 flex',
+        'flex',
         !isExpanded && !isHovered ? 'lg:justify-center' : 'justify-start',
       ]"
     >
@@ -23,7 +23,7 @@
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="dark:hidden"
-          src="/images/logo/logo.svg"
+          src="/assets/PNG/logo1.png"
           alt="Logo"
           width="150"
           height="40"
@@ -233,6 +233,7 @@ import {
 import SidebarWidget from "./SidebarWidget.vue";
 import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
+import ComptaIcon from "@/icons/ComptaIcon.vue";
 
 const route = useRoute();
 
@@ -244,63 +245,25 @@ const menuGroups = [
     items: [
       {
         icon: GridIcon,
-        name: "Dashboard",
-        subItems: [{ name: "Ecommerce", path: "/", pro: false }],
+        name: "Tableau de bord",
+        path: "/",
       },
       {
         icon: CalenderIcon,
-        name: "Calendar",
+        name: "Calendrier",
         path: "/calendar",
       },
       {
-        icon: UserCircleIcon,
-        name: "User Profile",
-        path: "/profile",
-      },
+        icon: ComptaIcon,
+        name: "Comptabilité",
+        subItems: [
+          { name: "Factures clients", path: "/factures-clients", pro: false },
+          { name: "Factures fournisseurs", path: "/factures-fournisseurs", pro: false },
+          { name: "Paiements", path: "/paiements", pro: false },
+          { name: "Comptes bancaires", path: "/comptes-bancaires", pro: false },
+          { name: "Journaux comptables", path: "/journaux-comptables", pro: false },
+          { name: "Rapports", path: "/rapports", pro: false },
 
-      {
-        name: "Forms",
-        icon: ListIcon,
-        subItems: [
-          { name: "Form Elements", path: "/form-elements", pro: false },
-        ],
-      },
-      {
-        name: "Tables",
-        icon: TableIcon,
-        subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
-      },
-      {
-        name: "Pages",
-        icon: PageIcon,
-        subItems: [
-          { name: "Black Page", path: "/blank", pro: false },
-          { name: "404 Page", path: "/error-404", pro: false },
-        ],
-      },
-    ],
-  },
-  {
-    title: "Others",
-    items: [
-      {
-        icon: PieChartIcon,
-        name: "Charts",
-        subItems: [
-          { name: "Line Chart", path: "/line-chart", pro: false },
-          { name: "Bar Chart", path: "/bar-chart", pro: false },
-        ],
-      },
-      {
-        icon: BoxCubeIcon,
-        name: "Ui Elements",
-        subItems: [
-          { name: "Alerts", path: "/alerts", pro: false },
-          { name: "Avatars", path: "/avatars", pro: false },
-          { name: "Badge", path: "/badge", pro: false },
-          { name: "Buttons", path: "/buttons", pro: false },
-          { name: "Images", path: "/images", pro: false },
-          { name: "Videos", path: "/videos", pro: false },
         ],
       },
       {
@@ -311,9 +274,61 @@ const menuGroups = [
           { name: "Signup", path: "/signup", pro: false },
         ],
       },
-      // ... Add other menu items here
+      // {
+      //   icon: UserCircleIcon,
+      //   name: "User Profile",
+      //   path: "/profile",
+      // },
+
+      // {
+      //   name: "Forms",
+      //   icon: ListIcon,
+      //   subItems: [
+      //     { name: "Form Elements", path: "/form-elements", pro: false },
+      //   ],
+      // },
+      // {
+      //   name: "Tables",
+      //   icon: TableIcon,
+      //   subItems: [{ name: "Basic Tables", path: "/basic-tables", pro: false }],
+      // },
+      // {
+      //   name: "Pages",
+      //   icon: PageIcon,
+      //   subItems: [
+      //     { name: "Black Page", path: "/blank", pro: false },
+      //     { name: "404 Page", path: "/error-404", pro: false },
+      //   ],
+      // },
     ],
   },
+  // {
+  //   title: "Others",
+  //   items: [
+  //     {
+  //       icon: PieChartIcon,
+  //       name: "Charts",
+  //       subItems: [
+  //         { name: "Line Chart", path: "/line-chart", pro: false },
+  //         { name: "Bar Chart", path: "/bar-chart", pro: false },
+  //       ],
+  //     },
+  //     {
+  //       icon: BoxCubeIcon,
+  //       name: "Ui Elements",
+  //       subItems: [
+  //         { name: "Alerts", path: "/alerts", pro: false },
+  //         { name: "Avatars", path: "/avatars", pro: false },
+  //         { name: "Badge", path: "/badge", pro: false },
+  //         { name: "Buttons", path: "/buttons", pro: false },
+  //         { name: "Images", path: "/images", pro: false },
+  //         { name: "Videos", path: "/videos", pro: false },
+  //       ],
+  //     },
+      
+  //     // ... Add other menu items here
+  //   ],
+  // },
 ];
 
 const isActive = (path) => route.path === path;

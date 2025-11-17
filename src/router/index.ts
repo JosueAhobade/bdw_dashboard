@@ -23,6 +23,54 @@ const router = createRouter({
       },
     },
     {
+      path: '/factures-clients',
+      name: 'Factures clients',
+      component: () => import('../views/Comptabilite/Factures-clients.vue'),
+      meta: {
+        title: 'Factures clients',
+      },
+    },
+    {
+      path: '/factures-fournisseurs',
+      name: 'Factures fournisseurs',
+      component: () => import('../views/Comptabilite/Factures-fournisseurs.vue'),
+      meta: {
+        title: 'Factures fournisseurs',
+      },
+    },
+    {
+      path: '/paiements',
+      name: 'Paiements',
+      component: () => import('../views/Comptabilite/Paiements.vue'),
+      meta: {
+        title: 'Paiements',
+      },
+    },
+    {
+      path: '/Comptes-bancaires',
+      name: 'Comptes bancaires',
+      component: () => import('../views/Comptabilite/Comptes-bancaires.vue'),
+      meta: {
+        title: 'Comptes bancaires',
+      },
+    },
+    {
+      path: '/journaux-comptables',
+      name: 'Journaux comptables',
+      component: () => import('../views/Comptabilite/Journaux-comptables.vue'),
+      meta: {
+        title: 'Journaux comptables',
+      },
+    },
+    {
+      path: '/rapports',
+      name: 'Rapports',
+      component: () => import('../views/Comptabilite/Rapports.vue'),
+      meta: {
+        title: 'Rapports',
+      },
+    },
+    {
       path: '/profile',
       name: 'Profile',
       component: () => import('../views/Others/UserProfile.vue'),
