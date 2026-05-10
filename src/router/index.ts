@@ -31,11 +31,11 @@ const router = createRouter({
       },
     },
     {
-      path: '/factures-fournisseurs',
-      name: 'Factures fournisseurs',
-      component: () => import('../views/Comptabilite/Factures-fournisseurs.vue'),
+      path: '/depenses',
+      name: 'Dépenses',
+      component: () => import('../views/Comptabilite/Depenses.vue'),
       meta: {
-        title: 'Factures fournisseurs',
+        title: 'Dépenses',
       },
     },
     {

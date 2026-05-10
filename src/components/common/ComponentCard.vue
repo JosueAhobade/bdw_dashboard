@@ -31,6 +31,7 @@
         <button
           v-if="label_btn"
           type="button"
+          @click="$emit('action')"
           class="inline-flex items-center rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-600 dark:bg-blue-700 dark:hover:bg-blue-600">
           {{ label_btn }}
         </button>
@@ -60,4 +61,6 @@ interface Props {
 }
 
 defineProps<Props>()
+
+const emit = defineEmits(["action"]);
 </script>

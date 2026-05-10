@@ -258,7 +258,7 @@ const menuGroups = [
         name: "Comptabilité",
         subItems: [
           { name: "Factures clients", path: "/factures-clients", pro: false },
-          { name: "Factures fournisseurs", path: "/factures-fournisseurs", pro: false },
+          { name: "Dépenses", path: "/depenses", pro: false },
           { name: "Paiements", path: "/paiements", pro: false },
           { name: "Comptes bancaires", path: "/comptes-bancaires", pro: false },
           { name: "Journaux comptables", path: "/journaux-comptables", pro: false },
