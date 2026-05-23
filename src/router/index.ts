@@ -23,11 +23,11 @@ const router = createRouter({
       },
     },
     {
-      path: '/factures-clients',
-      name: 'Factures clients',
-      component: () => import('../views/Comptabilite/Factures-clients.vue'),
+      path: '/recettes',
+      name: 'Recettes',
+      component: () => import('../views/Comptabilite/Recettes.vue'),
       meta: {
-        title: 'Factures clients',
+        title: 'Recettes',
       },
     },
     {
@@ -49,7 +49,7 @@ const router = createRouter({
     {
       path: '/Comptes-bancaires',
       name: 'Comptes bancaires',
-      component: () => import('../views/Comptabilite/Comptes-bancaires.vue'),
+      component: () => import('../views/Comptabilite/Comptes-associes.vue'),
       meta: {
         title: 'Comptes bancaires',
       },
