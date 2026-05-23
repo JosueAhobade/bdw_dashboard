@@ -131,8 +131,9 @@
   <AdminLayout>
     <PageBreadcrumb :pageTitle="currentPageTitle" />
     <div class="space-y-5 sm:space-y-6">
+      <input ref="fileInput" type="file" accept=".xlsx,.xls,.csv" class="hidden" @change="handleImport" />
       <ComponentCard title="Basic Table 1" label_btn="Créer une dépense" label_filter_btn="Filtrer"
-        label_import_btn="Importer" @action="showModal = true">
+        label_import_btn="Importer" @action="showModal = true" @import="openImport">
         <div
           class="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
           <div class="max-w-full overflow-x-auto custom-scrollbar">
@@ -166,7 +167,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
-                <tr v-for="(depense, index) in depenses" :key="depense.id"
+                <tr v-for="(depense, index) in paginatedDepenses" :key="depense.id"
                   class="border-t border-gray-100 dark:border-gray-800">
                   <!-- N° facture -->
                   <td class="px-5 py-4 sm:px-6">
@@ -237,11 +238,13 @@
                         Voir
                       </button>
 
-                      <button class="text-green-500 hover:underline border border-green-500 px-2 py-1 rounded">
+                      <button class="text-green-500 hover:underline border border-green-500 px-2 py-1 rounded"
+                        @click="editDepense(depense)">
                         Modifier
                       </button>
 
-                      <button class="text-red-500 hover:underline border border-red-500 px-2 py-1 rounded">
+                      <button class="text-red-500 hover:underline border border-red-500 px-2 py-1 rounded"
+                        @click="removeDepense(depense)">
                         Supprimer
                       </button>
                     </div>
@@ -249,6 +252,24 @@
                 </tr>
               </tbody>
             </table>
+
+            <div class="flex items-center justify-between px-5 py-4">
+              <p class="text-sm text-gray-500">
+                Page {{ currentPage }} sur {{ totalPages }}
+              </p>
+
+              <div class="flex gap-2">
+                <button class="border px-3 py-1 rounded disabled:opacity-50" :disabled="currentPage === 1"
+                  @click="currentPage--">
+                  Précédent
+                </button>
+
+                <button class="border px-3 py-1 rounded disabled:opacity-50" :disabled="currentPage === totalPages"
+                  @click="currentPage++">
+                  Suivant
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </ComponentCard>
@@ -257,19 +278,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 import AdminLayout from "@/components/layout/AdminLayout.vue";
 import PageBreadcrumb from "@/components/common/PageBreadcrumb.vue";
 import ComponentCard from "@/components/common/ComponentCard.vue";
+import * as XLSX from "xlsx";
 
-import { getAllDepenses, createDepense } from "@/services/depensesService";
+import { getAllDepenses, createDepense, updateDepense, deleteDepense } from "@/services/depensesService";
 
 const currentPageTitle = ref("Suivi des dépenses");
 
 const depenses = ref([]);
 
 const showModal = ref(false);
+
+const isEditing = ref(false);
+const editingId = ref(null);
 
 const form = ref({
   montant: "",
@@ -295,10 +320,16 @@ const fetchDepenses = async () => {
 
 const submitDepense = async () => {
   try {
-    await createDepense(form.value);
-
+    if (isEditing.value) {
+      await updateDepense(editingId.value, form.value);
+      alert("Dépense modifiée avec succès");
+    } else {
+      await createDepense(form.value);
+      alert("Dépense créée avec succès");
+    }
     // recharge les dépenses
     await fetchDepenses();
+    currentPage.value = 1;
 
     // reset formulaire
     form.value = {
@@ -312,11 +343,44 @@ const submitDepense = async () => {
 
     // fermer modal
     showModal.value = false;
+    isEditing.value = false;
+    editingId.value = null;
 
-    alert("Dépense créée avec succès");
   } catch (error) {
     console.error(error);
     alert("Erreur création dépense");
+  }
+};
+
+const editDepense = (depense) => {
+  isEditing.value = true;
+  editingId.value = depense.id;
+
+  form.value = {
+    montant: depense.montant,
+    devise: depense.devise,
+    type_depense: depense.type_depense,
+    description: depense.description,
+    date_depense: depense.date_depense,
+    status: depense.status,
+  };
+
+  showModal.value = true;
+};
+
+const removeDepense = async (depense) => {
+  if (!confirm(`Supprimer la dépense #FAC-${depense.id} ?`)) return;
+
+  try {
+    await deleteDepense(depense.id);
+
+    await fetchDepenses();
+    currentPage.value = 1;
+
+    alert("Dépense supprimée avec succès");
+  } catch (error) {
+    console.error(error);
+    alert("Erreur suppression dépense");
   }
 };
 
@@ -333,7 +397,65 @@ const shortText = (text, max = 30) => {
   return text.length > max ? text.slice(0, max) + "..." : text;
 };
 
+
+const fileInput = ref(null);
+
+const openImport = () => {
+  fileInput.value.click();
+};
+
+const handleImport = async (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  try {
+    const data = await file.arrayBuffer();
+    const workbook = XLSX.read(data);
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    const rows = XLSX.utils.sheet_to_json(sheet);
+
+    const depensesToImport = rows.map((row) => ({
+      montant: row.montant || row.Montant,
+      devise: row.devise || row.Devise || "XOF",
+      type_depense: row.type_depense || row["Type dépense"] || row.Type,
+      description: row.description || row.Description || "",
+      date_depense: row.date_depense || row.Date,
+      status: row.status || row.Status || "succès",
+    }));
+
+    for (const depense of depensesToImport) {
+      await createDepense(depense);
+    }
+
+    await fetchDepenses();
+    currentPage.value = 1;
+
+    alert("Import terminé avec succès");
+  } catch (error) {
+    console.error(error);
+    alert("Erreur pendant l'import");
+  } finally {
+    event.target.value = "";
+  }
+};
+
+const currentPage = ref(1);
+const perPage = ref(5);
+
+const totalPages = computed(() => {
+  return Math.ceil(depenses.value.length / perPage.value) || 1;
+});
+
+const paginatedDepenses = computed(() => {
+  const start = (currentPage.value - 1) * perPage.value;
+  const end = start + perPage.value;
+
+  return depenses.value.slice(start, end);
+});
+
 onMounted(() => {
   fetchDepenses();
+  currentPage.value = 1;
 });
 </script>
