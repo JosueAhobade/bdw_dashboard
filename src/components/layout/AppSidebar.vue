@@ -259,10 +259,10 @@ const menuGroups = [
         subItems: [
           { name: "Recettes", path: "/recettes", pro: false },
           { name: "Dépenses", path: "/depenses", pro: false },
-          { name: "Paiements", path: "/paiements", pro: false },
+          // { name: "Paiements", path: "/paiements", pro: false },
           { name: "Comptes associés", path: "/comptes-associes", pro: false },
-          { name: "Journaux comptables", path: "/journaux-comptables", pro: false },
-          { name: "Rapports", path: "/rapports", pro: false },
+          // { name: "Journaux comptables", path: "/journaux-comptables", pro: false },
+          // { name: "Rapports", path: "/rapports", pro: false },
 
         ],
       },

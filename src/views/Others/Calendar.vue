@@ -1,22 +1,16 @@
 <template>
   <AdminLayout>
     <PageBreadcrumb :pageTitle="currentPageTitle" />
-    <div
-      class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]"
-    >
+    <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
       <div class="custom-calendar">
         <FullCalendar ref="calendarRef" class="min-h-screen" :options="calendarOptions" />
       </div>
 
       <!-- Modal -->
-      <Modal v-if="isOpen" @close="closeModal = false">
-        <template #body>
+        <Modal v-if="isOpen" @close="closeModal()">        <template #body>
           <div
-            class="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11"
-          >
-            <h5
-              class="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl"
-            >
+            class="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
+            <h5 class="mb-2 font-semibold text-gray-800 modal-title text-theme-xl dark:text-white/90 lg:text-2xl">
               {{ selectedEvent ? "Modifier l'événement" : "Ajouter un événement" }}
             </h5>
             <p class="text-sm text-gray-500 dark:text-gray-400">
@@ -28,11 +22,8 @@
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                   Titre de l'événement
                 </label>
-                <input
-                  v-model="eventTitle"
-                  type="text"
-                  class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
+                <input v-model="eventTitle" type="text"
+                  class="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-300 bg-transparent px-4 py-2.5 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" />
               </div>
 
               <div class="mt-6">
@@ -42,22 +33,13 @@
                 <div class="flex flex-wrap items-center gap-4 sm:gap-5">
                   <div v-for="(value, key) in calendarsEvents" :key="key" class="n-chk">
                     <div :class="`form-check form-check-${value} form-check-inline`">
-                      <label
-                        class="flex items-center text-sm text-gray-700 form-check-label dark:text-gray-400"
-                        :for="`modal${key}`"
-                      >
+                      <label class="flex items-center text-sm text-gray-700 form-check-label dark:text-gray-400"
+                        :for="`modal${key}`">
                         <span class="relative">
-                          <input
-                            type="radio"
-                            :name="'event-level'"
-                            :value="key"
-                            :id="`modal${key}`"
-                            v-model="eventLevel"
-                            class="sr-only form-check-input"
-                          />
+                          <input type="radio" :name="'event-level'" :value="key" :id="`modal${key}`"
+                            v-model="eventLevel" class="sr-only form-check-input" />
                           <span
-                            class="flex items-center justify-center w-5 h-5 mr-2 border border-gray-300 rounded-full box dark:border-gray-700"
-                          >
+                            class="flex items-center justify-center w-5 h-5 mr-2 border border-gray-300 rounded-full box dark:border-gray-700">
                             <span class="w-2 h-2 bg-white rounded-full dark:bg-transparent"></span>
                           </span>
                         </span>
@@ -72,44 +54,31 @@
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                   Date de début
                 </label>
-                <input
-                  v-model="eventStartDate"
-                  type="date"
-                  class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
+                <input v-model="eventStartDate" type="date"
+                  class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" />
               </div>
 
               <div class="mt-6">
                 <label class="mb-1.5 block text-sm font-medium text-gray-700 dark:text-gray-400">
                   Date de fin
                 </label>
-                <input
-                  v-model="eventEndDate"
-                  type="date"
-                  class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800"
-                />
+                <input v-model="eventEndDate" type="date"
+                  class="dark:bg-dark-900 h-11 w-full appearance-none rounded-lg border border-gray-300 bg-transparent bg-none px-4 py-2.5 pl-4 pr-11 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-700 dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800" />
               </div>
             </div>
 
             <div class="flex items-center gap-3 mt-6 modal-footer sm:justify-end">
-              <button
-                @click="closeModal"
-                class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto"
-              >
+              <button @click="closeModal"
+                class="flex w-full justify-center rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] sm:w-auto">
                 Fermer
               </button>
 
-              <button
-                @click="handleAddOrUpdateEvent"
-                class="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto"
-              >
+              <button @click="handleAddOrUpdateEvent"
+                class="btn btn-success btn-update-event flex w-full justify-center rounded-lg bg-brand-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-brand-600 sm:w-auto">
                 {{ selectedEvent ? 'Enregistrer les modifications' : 'Ajouter un événement' }}
               </button>
-              <button
-                v-if="selectedEvent"
-                @click="handleDeleteEvent"
-                class="flex w-full justify-center rounded-lg border border-error-500 bg-error-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-error-600 sm:w-auto"
-              >
+              <button v-if="selectedEvent" @click="handleDeleteEvent"
+                class="flex w-full justify-center rounded-lg border border-error-500 bg-error-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-error-600 sm:w-auto">
                 Supprimer l'événement
               </button>
             </div>
@@ -221,22 +190,30 @@
 <script setup>
 import AdminLayout from '@/components/layout/AdminLayout.vue'
 import PageBreadcrumb from '@/components/common/PageBreadcrumb.vue'
+import Modal from '@/components/profile/Modal.vue'
 
-const currentPageTitle = ref('Calendrier')
 import { ref, reactive, onMounted } from 'vue'
 import FullCalendar from '@fullcalendar/vue3'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import interactionPlugin from '@fullcalendar/interaction'
-import Modal from '@/components/profile/Modal.vue'
+import {
+  getAllEvents,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+} from '@/services/eventsService'
+const currentPageTitle = ref('Calendrier')
 
 const calendarRef = ref(null)
 const isOpen = ref(false)
 const selectedEvent = ref(null)
+
 const eventTitle = ref('')
 const eventStartDate = ref('')
 const eventEndDate = ref('')
-const eventLevel = ref('')
+const eventLevel = ref('Primary')
+
 const events = ref([])
 
 const calendarsEvents = reactive({
@@ -246,28 +223,26 @@ const calendarsEvents = reactive({
   Warning: 'warning',
 })
 
+const mapApiEventToCalendar = (event) => ({
+  id: String(event.id),
+  title: event.title,
+  start: event.start_date,
+  end: event.end_date,
+  allDay: true,
+  extendedProps: {
+    calendar: event.status === 'cancelled' ? 'Danger' : 'Primary',
+    raw: event,
+  },
+})
+
+const fetchEvents = async () => {
+  const response = await getAllEvents()
+
+  events.value = response.data.map(mapApiEventToCalendar)
+}
+
 onMounted(() => {
-  events.value = [
-    {
-      id: '1',
-      title: 'Event Conf.',
-      start: new Date().toISOString().split('T')[0],
-      extendedProps: { calendar: 'Danger' },
-    },
-    {
-      id: '2',
-      title: 'Meeting',
-      start: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-      extendedProps: { calendar: 'Success' },
-    },
-    {
-      id: '3',
-      title: 'Workshop',
-      start: new Date(Date.now() + 172800000).toISOString().split('T')[0],
-      end: new Date(Date.now() + 259200000).toISOString().split('T')[0],
-      extendedProps: { calendar: 'Primary' },
-    },
-  ]
+  fetchEvents()
 })
 
 const openModal = () => {
@@ -283,7 +258,7 @@ const resetModalFields = () => {
   eventTitle.value = ''
   eventStartDate.value = ''
   eventEndDate.value = ''
-  eventLevel.value = ''
+  eventLevel.value = 'Primary'
   selectedEvent.value = null
 }
 
@@ -296,51 +271,48 @@ const handleDateSelect = (selectInfo) => {
 
 const handleEventClick = (clickInfo) => {
   const event = clickInfo.event
+
   selectedEvent.value = event
   eventTitle.value = event.title
-  eventStartDate.value = event.start?.toISOString().split('T')[0] || ''
-  eventEndDate.value = event.end?.toISOString().split('T')[0] || ''
-  eventLevel.value = event.extendedProps.calendar
+  eventStartDate.value = event.startStr
+  eventEndDate.value = event.endStr || event.startStr
+  eventLevel.value = event.extendedProps.calendar || 'Primary'
+
   openModal()
 }
 
-const handleAddOrUpdateEvent = () => {
-  if (selectedEvent.value) {
-    // Update existing event
-    events.value = events.value.map((event) =>
-      event.id === selectedEvent.value.id
-        ? {
-            ...event,
-            title: eventTitle.value,
-            start: eventStartDate.value,
-            end: eventEndDate.value,
-            extendedProps: { calendar: eventLevel.value },
-          }
-        : event,
-    )
-  } else {
-    // Add new event
-    const newEvent = {
-      id: Date.now().toString(),
-      title: eventTitle.value,
-      start: eventStartDate.value,
-      end: eventEndDate.value,
-      allDay: true,
-      extendedProps: { calendar: eventLevel.value },
-    }
-    events.value.push(newEvent)
+const handleAddOrUpdateEvent = async () => {
+  const payload = {
+    title: eventTitle.value,
+    start_date: eventStartDate.value,
+    end_date: eventEndDate.value || eventStartDate.value,
+    status: 'publié',
+    is_online: false,
   }
+
+  if (selectedEvent.value) {
+    await updateEvent(selectedEvent.value.id, payload)
+  } else {
+    await createEvent(payload)
+  }
+
+  await fetchEvents()
   closeModal()
 }
-const handleDeleteEvent = () => {
-  if (selectedEvent.value) {
-    events.value = events.value.filter((event) => event.id !== selectedEvent.value.id)
-    closeModal()
-  }
+
+const handleDeleteEvent = async () => {
+  if (!selectedEvent.value) return
+
+  await deleteEvent(selectedEvent.value.id)
+
+  await fetchEvents()
+  closeModal()
 }
 
 const renderEventContent = (eventInfo) => {
-  const colorClass = `fc-bg-${eventInfo.event.extendedProps.calendar.toLowerCase()}`
+  const calendar = eventInfo.event.extendedProps.calendar || 'Primary'
+  const colorClass = `fc-bg-${calendar.toLowerCase()}`
+
   return {
     html: `
       <div class="event-fc-color flex fc-event-main ${colorClass} p-1 rounded-sm">
@@ -360,7 +332,7 @@ const calendarOptions = reactive({
     center: 'title',
     right: 'dayGridMonth,timeGridWeek,timeGridDay',
   },
-  events: events,
+  events,
   selectable: true,
   select: handleDateSelect,
   eventClick: handleEventClick,

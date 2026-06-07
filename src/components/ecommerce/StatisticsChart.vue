@@ -4,68 +4,76 @@
   >
     <div class="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
       <div class="w-full">
-        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">Statistics</h3>
+        <h3 class="text-lg font-semibold text-gray-800 dark:text-white/90">
+          Évolution financière
+        </h3>
         <p class="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
-          Target you’ve set for each month
+          Recettes et dépenses par mois
         </p>
       </div>
-
-      <div class="relative">
-        <div class="inline-flex items-center gap-0.5 rounded-lg bg-gray-100 p-0.5 dark:bg-gray-900">
-          <button
-            v-for="option in options"
-            :key="option.value"
-            @click="selected = option.value"
-            :class="[
-              selected === option.value
-                ? 'shadow-theme-xs text-gray-900 dark:text-white bg-white dark:bg-gray-800'
-                : 'text-gray-500 dark:text-gray-400',
-              'px-3 py-2 font-medium rounded-md text-theme-sm hover:text-gray-900 hover:shadow-theme-xs dark:hover:bg-gray-800 dark:hover:text-white',
-            ]"
-          >
-            {{ option.label }}
-          </button>
-        </div>
-      </div>
     </div>
+
     <div class="max-w-full overflow-x-auto custom-scrollbar">
       <div id="chartThree" class="-ml-4 min-w-[1000px] xl:min-w-full pl-2">
-        <VueApexCharts type="area" height="310" :options="chartOptions" :series="series" />
+        <VueApexCharts
+          type="area"
+          height="310"
+          :options="chartOptions"
+          :series="series"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-
-const options = [
-  { value: 'optionOne', label: 'Monthly' },
-  { value: 'optionTwo', label: 'Quarterly' },
-  { value: 'optionThree', label: 'Annually' },
-]
-
-const selected = ref('optionOne')
+import { computed } from 'vue'
 import VueApexCharts from 'vue3-apexcharts'
 
-const series = ref([
+type MonthlyItem = {
+  month: number
+  recettes: number
+  depenses: number
+}
+
+type Statistics = {
+  monthly?: MonthlyItem[]
+}
+
+const props = defineProps<{
+  stats: Statistics | null
+}>()
+
+const formatMoney = (value: number): string => {
+  return new Intl.NumberFormat('fr-FR', {
+    style: 'currency',
+    currency: 'XOF',
+    maximumFractionDigits: 0,
+  }).format(value || 0)
+}
+
+const monthlyData = computed<MonthlyItem[]>(() => {
+  return props.stats?.monthly ?? []
+})
+
+const series = computed(() => [
   {
-    name: 'Sales',
-    data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
+    name: 'Recettes',
+    data: monthlyData.value.map((item: MonthlyItem) => Number(item.recettes || 0)),
   },
   {
-    name: 'Revenue',
-    data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+    name: 'Dépenses',
+    data: monthlyData.value.map((item: MonthlyItem) => Number(item.depenses || 0)),
   },
 ])
 
-const chartOptions = ref({
+const chartOptions = computed(() => ({
   legend: {
-    show: false,
+    show: true,
     position: 'top',
     horizontalAlign: 'left',
   },
-  colors: ['#465FFF', '#9CB9FF'],
+  colors: ['#22c55e', '#ef4444'],
   chart: {
     fontFamily: 'Outfit, sans-serif',
     type: 'area',
@@ -76,20 +84,16 @@ const chartOptions = ref({
   fill: {
     gradient: {
       enabled: true,
-      opacityFrom: 0.55,
+      opacityFrom: 0.45,
       opacityTo: 0,
     },
   },
   stroke: {
-    curve: 'straight',
+    curve: 'smooth',
     width: [2, 2],
   },
   markers: {
     size: 0,
-  },
-  labels: {
-    show: false,
-    position: 'top',
   },
   grid: {
     xaxis: {
@@ -107,25 +111,27 @@ const chartOptions = ref({
     enabled: false,
   },
   tooltip: {
-    x: {
-      format: 'dd MMM yyyy',
+    y: {
+      formatter: function (value: number) {
+        return formatMoney(value)
+      },
     },
   },
   xaxis: {
     type: 'category',
     categories: [
       'Jan',
-      'Feb',
+      'Fév',
       'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
+      'Avr',
+      'Mai',
+      'Juin',
+      'Juil',
+      'Août',
       'Sep',
       'Oct',
       'Nov',
-      'Dec',
+      'Déc',
     ],
     axisBorder: {
       show: false,
@@ -138,13 +144,18 @@ const chartOptions = ref({
     },
   },
   yaxis: {
+    labels: {
+      formatter: function (value: number) {
+        return formatMoney(value)
+      },
+    },
     title: {
       style: {
         fontSize: '0px',
       },
     },
   },
-})
+}))
 </script>
 
 <style scoped>
