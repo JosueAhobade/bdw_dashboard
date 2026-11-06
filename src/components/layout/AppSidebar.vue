@@ -234,12 +234,15 @@ import SidebarWidget from "./SidebarWidget.vue";
 import BoxCubeIcon from "@/icons/BoxCubeIcon.vue";
 import { useSidebar } from "@/composables/useSidebar";
 import ComptaIcon from "@/icons/ComptaIcon.vue";
+import { useAuth } from "@/composables/useAuth";
 
 const route = useRoute();
 
 const { isExpanded, isMobileOpen, isHovered, openSubmenu } = useSidebar();
 
-const menuGroups = [
+const { canManageUsers } = useAuth();
+
+const menuGroups = computed(() => [
   {
     title: "Menu",
     items: [
@@ -264,14 +267,6 @@ const menuGroups = [
           // { name: "Journaux comptables", path: "/journaux-comptables", pro: false },
           // { name: "Rapports", path: "/rapports", pro: false },
 
-        ],
-      },
-      {
-        icon: PlugInIcon,
-        name: "Authentication",
-        subItems: [
-          { name: "Signin", path: "/signin", pro: false },
-          { name: "Signup", path: "/signup", pro: false },
         ],
       },
       // {
@@ -329,7 +324,13 @@ const menuGroups = [
   //     // ... Add other menu items here
   //   ],
   // },
-];
+].map((group) => ({
+  ...group,
+  items: [
+    ...group.items,
+    ...(canManageUsers.value ? [{ icon: UserCircleIcon, name: "Utilisateurs", path: "/utilisateurs" }] : []),
+  ],
+})));
 
 const isActive = (path) => route.path === path;
 
@@ -339,7 +340,7 @@ const toggleSubmenu = (groupIndex, itemIndex) => {
 };
 
 const isAnySubmenuRouteActive = computed(() => {
-  return menuGroups.some((group) =>
+  return menuGroups.value.some((group) =>
     group.items.some(
       (item) =>
         item.subItems && item.subItems.some((subItem) => isActive(subItem.path))
@@ -352,7 +353,7 @@ const isSubmenuOpen = (groupIndex, itemIndex) => {
   return (
     openSubmenu.value === key ||
     (isAnySubmenuRouteActive.value &&
-      menuGroups[groupIndex].items[itemIndex].subItems?.some((subItem) =>
+      menuGroups.value[groupIndex].items[itemIndex].subItems?.some((subItem) =>
         isActive(subItem.path)
       ))
   );

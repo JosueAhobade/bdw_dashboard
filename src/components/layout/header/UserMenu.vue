@@ -4,11 +4,13 @@
       class="flex items-center text-gray-700 dark:text-gray-400"
       @click.prevent="toggleDropdown"
     >
-      <span class="mr-3 overflow-hidden rounded-full h-11 w-11">
-        <img src="/images/user/owner.jpg" alt="User" />
+      <span
+        class="mr-3 flex h-11 w-11 items-center justify-center rounded-full bg-brand-500 font-semibold text-white"
+      >
+        {{ initials }}
       </span>
 
-      <span class="block mr-1 font-medium text-theme-sm">Musharof </span>
+      <span class="block mr-1 font-medium text-theme-sm">{{ user?.username }}</span>
 
       <ChevronDownIcon :class="{ 'rotate-180': dropdownOpen }" />
     </button>
@@ -20,10 +22,15 @@
     >
       <div>
         <span class="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-          Musharof Chowdhury
+          {{ user?.username }}
         </span>
         <span class="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-          randomuser@pimjo.com
+          {{ user?.email }}
+        </span>
+        <span
+          class="mt-2 inline-block rounded-full bg-brand-50 px-2 py-0.5 text-theme-xs font-medium text-brand-600 dark:bg-brand-500/15 dark:text-brand-400"
+        >
+          {{ roleLabel }}
         </span>
       </div>
 
@@ -42,16 +49,16 @@
           </router-link>
         </li>
       </ul>
-      <router-link
-        to="/signin"
+      <button
+        type="button"
         @click="signOut"
         class="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
       >
         <LogoutIcon
           class="text-gray-500 group-hover:text-gray-700 dark:group-hover:text-gray-300"
         />
-        Sign out
-      </router-link>
+        Se déconnecter
+      </button>
     </div>
     <!-- Dropdown End -->
   </div>
@@ -59,14 +66,15 @@
 
 <script setup lang="ts">
 import { ChevronDownIcon, InfoCircleIcon, LogoutIcon, SettingsIcon, UserCircleIcon } from '@/icons'
-import { onMounted, onUnmounted, ref } from 'vue'
-import { RouterLink } from 'vue-router'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { RouterLink, useRouter } from 'vue-router'
+import { ROLE_LABELS, useAuth } from '@/composables/useAuth'
 
 const dropdownOpen = ref(false)
 const dropdownRef = ref<HTMLElement | null>(null)
 
 const menuItems = [
-  { href: '/profile', icon: UserCircleIcon, text: 'Edit profile' }
+  { href: '/mon-compte', icon: UserCircleIcon, text: 'Mon compte' }
 ]
 
 const toggleDropdown = () => {
@@ -77,10 +85,24 @@ const closeDropdown = () => {
   dropdownOpen.value = false
 }
 
-const signOut = () => {
-  // Implement sign out logic here
-  console.log('Signing out...')
+const router = useRouter()
+const { user, logout } = useAuth()
+
+const initials = computed(() =>
+  (user.value?.username || '?')
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part: string) => part[0].toUpperCase())
+    .join(''),
+)
+
+const roleLabel = computed(() => ROLE_LABELS[user.value?.role ?? ''] ?? '')
+
+const signOut = async () => {
   closeDropdown()
+  await logout()
+  router.replace('/signin')
 }
 
 const handleClickOutside = (event: Event) => {

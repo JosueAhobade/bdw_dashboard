@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuth } from '@/composables/useAuth'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -68,6 +69,23 @@ const router = createRouter({
       component: () => import('../views/Comptabilite/Rapports.vue'),
       meta: {
         title: 'Rapports',
+      },
+    },
+    {
+      path: '/utilisateurs',
+      name: 'Utilisateurs',
+      component: () => import('../views/Users/Utilisateurs.vue'),
+      meta: {
+        title: 'Utilisateurs',
+        roles: ['superadmin', 'admin'],
+      },
+    },
+    {
+      path: '/mon-compte',
+      name: 'Mon compte',
+      component: () => import('../views/Users/MonCompte.vue'),
+      meta: {
+        title: 'Mon compte',
       },
     },
     {
@@ -177,15 +195,8 @@ const router = createRouter({
       name: 'Signin',
       component: () => import('../views/Auth/Signin.vue'),
       meta: {
-        title: 'Signin',
-      },
-    },
-    {
-      path: '/signup',
-      name: 'Signup',
-      component: () => import('../views/Auth/Signup.vue'),
-      meta: {
-        title: 'Signup',
+        title: 'Connexion',
+        public: true,
       },
     },
   ],
@@ -193,7 +204,25 @@ const router = createRouter({
 
 export default router
 
-router.beforeEach((to, from, next) => {
-  document.title = `Vue.js ${to.meta.title} | TailAdmin - Vue.js Tailwind CSS Dashboard Template`
-  next()
+router.beforeEach(async (to) => {
+  document.title = `${to.meta.title ?? 'Dashboard'} | BDW Dashboard`
+
+  const { fetchMe, hasToken } = useAuth()
+  const user = hasToken() ? await fetchMe() : null
+
+  if (to.meta.public) {
+    // Déjà connecté : pas besoin de la page de connexion
+    return user ? { path: '/' } : true
+  }
+
+  if (!user) {
+    return { path: '/signin', query: to.fullPath !== '/' ? { redirect: to.fullPath } : {} }
+  }
+
+  const roles = to.meta.roles as string[] | undefined
+  if (roles && !roles.includes(user.role)) {
+    return { path: '/' }
+  }
+
+  return true
 })

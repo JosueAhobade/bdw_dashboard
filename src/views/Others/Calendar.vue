@@ -203,6 +203,13 @@ import {
   updateEvent,
   deleteEvent,
 } from '@/services/eventsService'
+import { useAuth } from '@/composables/useAuth'
+
+// Comptable : calendrier en lecture seule
+const { canManageOperations } = useAuth()
+
+const escapeHtml = (value) =>
+  String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c])
 const currentPageTitle = ref('Calendrier')
 
 const calendarRef = ref(null)
@@ -311,14 +318,14 @@ const handleDeleteEvent = async () => {
 
 const renderEventContent = (eventInfo) => {
   const calendar = eventInfo.event.extendedProps.calendar || 'Primary'
-  const colorClass = `fc-bg-${calendar.toLowerCase()}`
+  const colorClass = `fc-bg-${escapeHtml(calendar.toLowerCase())}`
 
   return {
     html: `
       <div class="event-fc-color flex fc-event-main ${colorClass} p-1 rounded-sm">
         <div class="fc-daygrid-event-dot"></div>
-        <div class="fc-event-time">${eventInfo.timeText}</div>
-        <div class="fc-event-title">${eventInfo.event.title}</div>
+        <div class="fc-event-time">${escapeHtml(eventInfo.timeText)}</div>
+        <div class="fc-event-title">${escapeHtml(eventInfo.event.title)}</div>
       </div>
     `,
   }
@@ -328,14 +335,14 @@ const calendarOptions = reactive({
   plugins: [dayGridPlugin, timeGridPlugin, interactionPlugin],
   initialView: 'dayGridMonth',
   headerToolbar: {
-    left: 'prev,next addEventButton',
+    left: canManageOperations.value ? 'prev,next addEventButton' : 'prev,next',
     center: 'title',
     right: 'dayGridMonth,timeGridWeek,timeGridDay',
   },
   events,
-  selectable: true,
+  selectable: canManageOperations.value,
   select: handleDateSelect,
-  eventClick: handleEventClick,
+  eventClick: (info) => canManageOperations.value && handleEventClick(info),
   eventContent: renderEventContent,
   customButtons: {
     addEventButton: {
