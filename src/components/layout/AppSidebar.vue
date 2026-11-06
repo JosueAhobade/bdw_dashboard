@@ -23,26 +23,23 @@
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="dark:hidden"
-          src="/assets/PNG/logo1.png"
-          alt="Logo"
+          src="/images/logo/bdw-logo.png"
+          alt="Baroque Digital Works"
           width="150"
-          height="40"
+          height="54"
         />
         <img
           v-if="isExpanded || isHovered || isMobileOpen"
           class="hidden dark:block"
-          src="/images/logo/logo-dark.svg"
-          alt="Logo"
+          src="/images/logo/bdw-logo-dark.png"
+          alt="Baroque Digital Works"
           width="150"
-          height="40"
+          height="54"
         />
-        <img
-          v-else
-          src="/images/logo/logo-icon.svg"
-          alt="Logo"
-          width="32"
-          height="32"
-        />
+        <template v-else>
+          <img class="dark:hidden" src="/images/logo/bdw-icon.png" alt="BDW" width="32" height="33" />
+          <img class="hidden dark:block" src="/images/logo/bdw-icon-dark.png" alt="BDW" width="32" height="33" />
+        </template>
       </router-link>
     </div>
     <div
