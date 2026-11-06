@@ -9,10 +9,11 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Ecommerce',
+      name: 'Tableau de bord',
       component: () => import('../views/Ecommerce.vue'),
       meta: {
-        title: 'eCommerce Dashboard',
+        title: 'Tableau de bord - BDW',
+        fullTitle: true,
       },
     },
     {
@@ -217,7 +218,9 @@ const router = createRouter({
 export default router
 
 router.beforeEach(async (to) => {
-  document.title = `${to.meta.title ?? 'Dashboard'} | BDW Dashboard`
+  document.title = to.meta.fullTitle
+    ? String(to.meta.title)
+    : `${to.meta.title ?? 'Dashboard'} | BDW Dashboard`
 
   const { fetchMe, hasToken } = useAuth()
   const user = hasToken() ? await fetchMe() : null
