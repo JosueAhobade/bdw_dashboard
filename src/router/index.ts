@@ -48,12 +48,24 @@ const router = createRouter({
       },
     },
     {
-      path: '/Comptes-bancaires',
-      name: 'Comptes bancaires',
+      path: '/comptes-associes',
+      name: 'Comptes associés',
       component: () => import('../views/Comptabilite/Comptes-associes.vue'),
       meta: {
-        title: 'Comptes bancaires',
+        title: "Comptes d'associés",
       },
+    },
+    {
+      path: '/comptes-associes/:id(\\d+)',
+      name: 'Compte associé',
+      component: () => import('../views/Comptabilite/CompteAssocie.vue'),
+      meta: {
+        title: "Compte d'associé",
+      },
+    },
+    {
+      path: '/Comptes-bancaires',
+      redirect: '/comptes-associes',
     },
     {
       path: '/journaux-comptables',
